@@ -41,11 +41,25 @@ int main()
   // 0. Initialize LED strip
   printf("0. Initialize LED strip\n");
   auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN, LED_LENGTH, PicoLed::FORMAT_GRB);
-  mainStrip.setBrightness(127);
+  mainStrip.setBrightness(70);
 
   mainStrip.clear();
-  mainStrip.fill({0, 255, 4}, 0, LED_LENGTH / 2 - 1);
-  mainStrip.fill({102, 0, 255}, LED_LENGTH / 2, LED_LENGTH / 2);
+  /*mainStrip.fill({0, 255, 4}, 0, LED_LENGTH / 4 - 1);*/
+  /*mainStrip.fill({102, 0, 255}, LED_LENGTH / 4, LED_LENGTH / 4);*/
+  /*mainStrip.fill({0, 255, 4}, (LED_LENGTH / 4) * 2, LED_LENGTH / 4);*/
+  /*mainStrip.fill({102, 0, 255}, (LED_LENGTH / 4) * 3, LED_LENGTH / 4);*/
+  bool fillGreen = true;
+  int swaps = 30;
+  for(int i = 0; i < LED_LENGTH; i += (LED_LENGTH / swaps)) {
+    if(fillGreen) {
+      mainStrip.fill({0, 255, 4}, i, LED_LENGTH / swaps);
+    }
+    else {
+      mainStrip.fill({102, 0, 255}, i, LED_LENGTH / swaps);
+    }
+    fillGreen = !fillGreen;
+  }
+  /*mainStrip.fillGradient({0, 255, 4}, {102, 0, 255});*/
 
   mainStrip.show();
 
