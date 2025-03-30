@@ -76,7 +76,7 @@ int main()
 
   // 0. Initialize LED strip
   auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN, LED_LENGTH, PicoLed::FORMAT_GRB);
-  mainStrip.setBrightness(127);
+  mainStrip.setBrightness(70);
 
   mainStrip.clear();
   mainStrip.show();
@@ -105,13 +105,13 @@ int main()
   auto rightCascade2 = mainStrip.slice(709, 829);
 
   auto beginning = mainStrip.slice(0, 249);
-  auto end = mainStrip.slice(830, LED_LENGTH - 1);
+  /*auto end = mainStrip.slice(830, LED_LENGTH - 1);*/
 
   PicoLed::Comet beginningEffect(beginning, {102, 0, 255}, 80.0, 40.0, 20.0);
 
   PicoLed::Comet middleEffect(middle, {0, 255, 0}, 80.0, 20.0, 20.0);
 
-  PicoLed::Comet endEffect(end, {0, 255, 0}, 80.0, 40.0, 20.0);
+  /*PicoLed::Comet endEffect(end, {0, 255, 0}, 80.0, 40.0, 20.0);*/
 
   /*rightCascade1.setPixelColor(0, {255, 255, 255});*/
   /*rightCascade2.setPixelColor(0, {255, 255, 255});*/
@@ -139,7 +139,7 @@ int main()
       scrollStrip(&rightCascade2);
       beginningEffect.animate();
       middleEffect.animate();
-      endEffect.animate();
+      /*endEffect.animate();*/
       mainStrip.show();
       sleep_ms(1);
     }
