@@ -13,6 +13,8 @@
 
 PicoLed::Color previous[LED_LENGTH];
 
+PicoLed::Color purple{166, 0, 255};
+
 void scrollStrip(PicoLed::PicoLedController* strip, bool flip = false) {
   PicoLed::Color previous[LED_LENGTH];
   auto num = strip->getNumLeds();
@@ -57,13 +59,14 @@ void scrollStrip(PicoLed::PicoLedController* strip, bool flip = false) {
 }
 
 void fillGreenPurple(PicoLed::PicoLedController* strip, int swaps, bool startGreen = true) {
-  bool fillGreen = true;
-  for(int i = 0; i < LED_LENGTH; i += (LED_LENGTH / swaps)) {
+  bool fillGreen = startGreen;
+  int length = strip->getNumLeds();
+  for(int i = 0; i < length; i += (length / swaps)) {
     if(fillGreen) {
-      strip->fill({0, 255, 0}, i, LED_LENGTH / swaps);
+      strip->fill({0, 255, 0}, i, length / swaps);
     }
     else {
-      strip->fill({102, 0, 255}, i, LED_LENGTH / swaps);
+      strip->fill(purple, i, length / swaps);
     }
     fillGreen = !fillGreen;
   }
@@ -76,7 +79,7 @@ int main()
 
   // 0. Initialize LED strip
   auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN, LED_LENGTH, PicoLed::FORMAT_GRB);
-  mainStrip.setBrightness(70);
+  mainStrip.setBrightness(127);
 
   mainStrip.clear();
   mainStrip.show();
@@ -107,9 +110,9 @@ int main()
   auto beginning = mainStrip.slice(0, 249);
   /*auto end = mainStrip.slice(830, LED_LENGTH - 1);*/
 
-  PicoLed::Comet beginningEffect(beginning, {102, 0, 255}, 80.0, 40.0, 20.0);
+  PicoLed::Comet beginningEffect(beginning, purple, 80.0, 40.0, 20.0);
 
-  PicoLed::Comet middleEffect(middle, {0, 255, 0}, 80.0, 20.0, 20.0);
+  PicoLed::Comet middleEffect(middle, {0, 255, 0}, 60.0, 20.0, 20.0);
 
   /*PicoLed::Comet endEffect(end, {0, 255, 0}, 80.0, 40.0, 20.0);*/
 
@@ -118,11 +121,11 @@ int main()
   /*rightCascade1.setPixelColor(rightCascade1.getNumLeds(), {255, 255, 255});*/
   /*rightCascade2.setPixelColor(rightCascade2.getNumLeds(), {255, 255, 255});*/
 
-  fillGreenPurple(&leftCascade1, 30, false);
-  fillGreenPurple(&leftCascade2, 30);
+  fillGreenPurple(&leftCascade1, 2);
+  fillGreenPurple(&leftCascade2, 2, false);
 
-  fillGreenPurple(&rightCascade1, 30, false);
-  fillGreenPurple(&rightCascade2, 30);
+  fillGreenPurple(&rightCascade1, 2);
+  fillGreenPurple(&rightCascade2, 2, false);
 
   mainStrip.show();
 
