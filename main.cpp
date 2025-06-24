@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <cstdint>
 #include "pico/stdlib.h"
 
 #include <PicoLed.hpp>
@@ -9,7 +10,7 @@
 #include <Effects/Particles.hpp>
 
 #define LED_PIN 0
-#define LED_LENGTH 1080
+#define LED_LENGTH 540
 
 PicoLed::Color previous[LED_LENGTH];
 
@@ -79,70 +80,19 @@ int main()
 
   // 0. Initialize LED strip
   auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN, LED_LENGTH, PicoLed::FORMAT_GRB);
-  mainStrip.setBrightness(60);
+  mainStrip.setBrightness(127);
 
   mainStrip.clear();
   mainStrip.show();
 
-  /*bool fillGreen = true;*/
-  /*int swaps = 30;*/
-  /*for(int i = 0; i < LED_LENGTH; i += (LED_LENGTH / swaps)) {*/
-  /*  if(fillGreen) {*/
-  /*    mainStrip.fill({0, 255, 0}, i, LED_LENGTH / swaps);*/
-  /*  }*/
-  /*  else {*/
-  /*    mainStrip.fill({102, 0, 255}, i, LED_LENGTH / swaps);*/
-  /*  }*/
-  /*  fillGreen = !fillGreen;*/
-  /*}*/
-
-  // CASCADE CHANNEL 1 starts at 250
-  // CASCADE CHANNEL 1 ends at 500
-  /*mainStrip.setPixelColor(372, {255, 255, 255});*/
-  auto leftCascade1 = mainStrip.slice(250, 370);
-  auto leftCascade2 = mainStrip.slice(380, 500);
-
-  auto middle = mainStrip.slice(501, 578);
-
-  auto rightCascade1 = mainStrip.slice(579, 699);
-  auto rightCascade2 = mainStrip.slice(709, 829);
-
-  auto beginning = mainStrip.slice(0, 249);
-  /*auto end = mainStrip.slice(830, LED_LENGTH - 1);*/
-
-  PicoLed::Comet beginningEffect(beginning, purple, 80.0, 40.0, 20.0);
-
-  PicoLed::Comet middleEffect(middle, {0, 255, 0}, 60.0, 20.0, 20.0);
-
-  /*PicoLed::Comet endEffect(end, {0, 255, 0}, 80.0, 40.0, 20.0);*/
-
-  /*rightCascade1.setPixelColor(0, {255, 255, 255});*/
-  /*rightCascade2.setPixelColor(0, {255, 255, 255});*/
-  /*rightCascade1.setPixelColor(rightCascade1.getNumLeds(), {255, 255, 255});*/
-  /*rightCascade2.setPixelColor(rightCascade2.getNumLeds(), {255, 255, 255});*/
-
-  fillGreenPurple(&leftCascade1, 2);
-  fillGreenPurple(&leftCascade2, 2, false);
-
-  fillGreenPurple(&rightCascade1, 2);
-  fillGreenPurple(&rightCascade2, 2, false);
+  fillGreenPurple(&mainStrip, 6);
 
   mainStrip.show();
 
-  /*mainStrip.fill({0, 255, 4}, 0, LED_LENGTH / 2);*/
-  /*mainStrip.fill({102, 0, 255}, LED_LENGTH / 2, LED_LENGTH / 2 - 1);*/
-  /*mainStrip.show();*/
-
   while(true) {
       
-      /*scrollStrip(&mainStrip);*/
-      scrollStrip(&leftCascade1);
-      scrollStrip(&leftCascade2, true);
-      scrollStrip(&rightCascade1, true);
-      scrollStrip(&rightCascade2);
-      beginningEffect.animate();
-      middleEffect.animate();
-      /*endEffect.animate();*/
+      scrollStrip(&mainStrip);
+
       mainStrip.show();
       sleep_ms(1);
     }
