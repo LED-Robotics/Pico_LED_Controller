@@ -79,7 +79,7 @@ int main()
 
   // 0. Initialize LED strip
   auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN, LED_LENGTH, PicoLed::FORMAT_GRB);
-  mainStrip.setBrightness(127);
+  mainStrip.setBrightness(60);
 
   mainStrip.clear();
   mainStrip.show();
