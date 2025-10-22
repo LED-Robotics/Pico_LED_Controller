@@ -13,8 +13,10 @@ pico_sdk_init()
 
 include("PicoLED/PicoLed.cmake")
 
+include_directories(include)
+
 add_executable(main
-    main.cpp
+    src/main.cpp
 )
 
 pico_enable_stdio_usb(main 1)
