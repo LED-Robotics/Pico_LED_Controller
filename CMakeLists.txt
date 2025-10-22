@@ -17,6 +17,7 @@ include_directories(include)
 
 add_executable(main
     src/main.cpp
+    src/functions.cpp
 )
 
 pico_enable_stdio_usb(main 1)

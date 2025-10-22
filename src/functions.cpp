@@ -1,6 +1,10 @@
 #include "functions.h"
 #include "commands.h"
 
+int ledLength = 1080;
+
+PicoLed::Color purple{166, 0, 255};
+
 void runCommand(uint16_t command, uint8_t *data) {
   switch(command) {
     case LEDS_OFF:

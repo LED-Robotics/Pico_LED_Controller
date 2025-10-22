@@ -1,12 +1,14 @@
+#pragma once
+
 #include <cstdint>
 #include <stdio.h>
 #include "pico/stdlib.h"
 
 #include <PicoLed.hpp>
 
-int ledLength = 1080;
+extern int ledLength;
 
-PicoLed::Color purple{166, 0, 255};
+extern PicoLed::Color purple;
 
 // Helper functions
 
