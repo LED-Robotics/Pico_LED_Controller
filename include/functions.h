@@ -3,12 +3,15 @@
 #include <cstdint>
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "pico/cyw43_arch.h"
 
 #include <PicoLed.hpp>
 
 extern int ledLength;
 
 extern PicoLed::Color purple;
+
+#define LED_PIN 25
 
 // Helper functions
 
@@ -18,6 +21,7 @@ void fillGreenPurple(PicoLed::PicoLedController* strip, int swaps, bool startGre
 // Commands from registry
 void runCommand(uint16_t command, uint8_t *data);
 
+void debugBlink();
 void ledsOff(uint8_t* data);
 void ledsOn(uint8_t* data);
 void idleAnimate(uint8_t* data);

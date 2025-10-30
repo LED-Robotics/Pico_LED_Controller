@@ -1,5 +1,8 @@
 #include "pico/stdlib.h"
+#include <boards/pico2_w.h>
+#include "pico/cyw43_arch.h"
 #include <cstdint>
+#include <hardware/structs/io_bank0.h>
 #include <stdio.h>
 
 #include <Effects/Bounce.hpp>
@@ -13,10 +16,10 @@
 
 #include "hardware/uart.h"
 
-#define UART_TX_PIN 4
-#define UART_RX_PIN 5
+#define UART_TX_PIN 0
+#define UART_RX_PIN 1
 
-#define UART_ID uart1
+#define UART_ID uart0
 #define BAUD_RATE 115200
 #define DATA_BITS 8
 #define STOP_BITS 1
@@ -24,41 +27,51 @@
 
 #define PACKET_SIZE 50
 
-#define LED_PIN 0
-
-uint8_t rxBuf[PACKET_SIZE];
+uint8_t* rxBuf;
 
 int main() {
   stdio_init_all();
+  cyw43_arch_init();
 
-  gpio_set_function(0, UART_FUNCSEL_NUM(UART_ID, UART_TX_PIN));
-  gpio_set_function(1, UART_FUNCSEL_NUM(UART_ID, UART_RX_PIN));
+  rxBuf = (uint8_t*)malloc(PACKET_SIZE);
+
+  // gpio_init(LED_PIN);
+  // gpio_set_dir(LED_PIN, GPIO_OUT);
 
   // Initialise UART
-  uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
   uart_init(UART_ID, BAUD_RATE);
+  uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
 
-  // uart_puts(UART_ID, "Hello world!");
+  gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+  gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
   sleep_ms(1000);
 
-  // 0. Initialize LED strip
-  // auto mainStrip = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_PIN,
-  // ledLength, PicoLed::FORMAT_GRB); mainStrip.setBrightness(60);
-  //
-  // mainStrip.clear();
-  // mainStrip.show();
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, true);
+  sleep_ms(250);
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, false);
+
+  printf("Debug Init\n");
 
   while (true) {
     if (uart_is_readable(UART_ID)) {
-      uart_read_blocking(UART_ID, &rxBuf[0], PACKET_SIZE);
-      uint16_t id = 0;
-      for(int i = 0; i < 4; i++) {
-        id += rxBuf[i] << ((4 - i) * 4);
+      // Clear buffer
+      memset(rxBuf, 0x00, PACKET_SIZE);
+      // Fill buffer with available bytes
+      for(int i = 0; i < PACKET_SIZE; i++) {
+        if(!uart_is_readable(UART_ID)) break;
+        rxBuf[i] = uart_getc(UART_ID);
+        printf("%x", rxBuf[i]);
       }
+      // Assemble packet ID
+      uint8_t* high = &rxBuf[0];
+      uint8_t* low = &rxBuf[1];
+      uint16_t id = (*high << 8) + *low;
+      printf("Received ID: %d\n", id);
+      // Run command associated with ID
       runCommand(id, &rxBuf[4]);
     }
-    sleep_ms(1);
+    sleep_ms(20);
   }
   return 0;
 }

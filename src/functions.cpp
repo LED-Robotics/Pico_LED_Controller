@@ -7,6 +7,9 @@ PicoLed::Color purple{166, 0, 255};
 
 void runCommand(uint16_t command, uint8_t *data) {
   switch(command) {
+    case DEBUG_BLINK:
+      debugBlink();
+      break;
     case LEDS_OFF:
       ledsOff(data);
       break;
@@ -17,6 +20,13 @@ void runCommand(uint16_t command, uint8_t *data) {
       idleAnimate(data);
       break;
   }
+}
+
+void debugBlink() {
+  // gpio_put(LED_PIN, true);
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
+  sleep_ms(250);
+  cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
 }
 
 void ledsOff(uint8_t* data) {
