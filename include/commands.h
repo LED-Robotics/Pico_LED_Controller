@@ -1,39 +1,60 @@
 #pragma once
 
+#include "PicoLedController.hpp"
+#include "pico/stdlib.h"
+#include <cstdint>
+#include <functional>
+
 /*
 * FIRST TWO BYTES OF EVERY PACKET ARE THE COMMAND ID
 * PAYLOAD FOLLOWS IMMEDIATELY AFTER
 */
 
+struct ledStrip {
+  uint8_t id;
+  uint8_t stateMachine;
+  PicoLed::PicoLedController strip;
+  bool isVirtual = false;
+  std::function<void()> animate = nullptr;
+};
+
 #define DEBUG_BLINK 0x69fa
-/*  BLINK ONBOARD LED FOR DEBUG
-* PAYLOAD[0...] UNUSED
-*/
+
 #define LEDS_OFF 0x0eaf
-/*  CLEAR STRIP
-* PAYLOAD[0] STRIP TO SELECT
-* PAYLOAD[1...] UNUSED
-*/
-#define LEDS_ON 0x915b
-/*  RESUME ANIMATING IF PAUSED
-* PAYLOAD[0] STRIP TO SELECT
-* PAYLOAD[1...] UNUSED
-*/
+struct LedsOff {
+  uint8_t stripId;
+};
+
 #define IDLE_ANIMATE 0xa146
-/*  RUN PURPLE/GREEN IDLE ANIMATION
-* PAYLOAD[0] STRIP TO SELECT
-* PAYLOAD[1] SWAPS
-* PAYLOAD[2] START GREEN
-* PAYLOAD[3...] UNUSED
-*/
+struct IdleAnimate {
+  uint8_t stripId;
+  uint8_t swaps;
+  uint8_t startGreen;
+};
+
+#define FILL_STRIP 0xc273
+struct FillStrip {
+  uint8_t stripId;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+};
+
 #define CREATE_STRIP 0x8bda
-/*  COMMAND TO CREATE NEW LED CONTROLLER
-* PAYLOAD[0] PIN OF STRIP
-* PAYLOAD[1] LENGTH OF STRIP
-* PAYLOAD[2...] UNUSED
-*/
+struct CreateStrip {
+  uint8_t stripPin;
+  uint16_t ledLength;
+};
+
 #define DESTROY_STRIP 0x10e7
-/*  COMMAND TO DESTROY LED CONTROLLER
-* PAYLOAD[0] ID OF STRIP
-* PAYLOAD[1...] UNUSED
-*/
+struct DestroyStrip {
+  uint8_t stripId;
+};
+
+#define CREATE_SLICE 0x3138
+struct CreateSlice {
+  uint8_t stripId;
+  uint16_t startLed;
+  uint16_t endLed;
+};
+

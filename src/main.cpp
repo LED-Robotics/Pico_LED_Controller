@@ -54,6 +54,7 @@ int main() {
   printf("Debug Init\n");
 
   while (true) {
+    // UART command handling
     if (uart_is_readable(UART_ID)) {
       // Clear buffer
       memset(rxBuf, 0x00, PACKET_SIZE);
@@ -61,15 +62,29 @@ int main() {
       for(int i = 0; i < PACKET_SIZE; i++) {
         if(!uart_is_readable(UART_ID)) break;
         rxBuf[i] = uart_getc(UART_ID);
-        printf("%x", rxBuf[i]);
+        printf("%x", (int)rxBuf[i]);
       }
+      printf("\n");
       // Assemble packet ID
       uint8_t* high = &rxBuf[0];
       uint8_t* low = &rxBuf[1];
       uint16_t id = (*high << 8) + *low;
       printf("Received ID: %d\n", id);
       // Run command associated with ID
-      runCommand(id, &rxBuf[4]);
+      runCommand(id, &rxBuf[2]);
+    }
+    //  Animation handling
+    for(auto &strip : strips) {
+      if(strip.animate != nullptr) {
+        // Run animation commands
+        strip.animate();
+      }
+    }
+    for(auto &strip : strips) {
+      if(!strip.isVirtual) {
+        // Flush changes to actual hardware controllers
+        strip.strip.show();
+      }
     }
     sleep_ms(20);
   }
