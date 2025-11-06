@@ -18,22 +18,28 @@ struct ledStrip {
   std::function<void()> animate = nullptr;
 };
 
+struct Request {
+  uint16_t commandId;
+  uint8_t* payload;
+  uint16_t len;
+};
+
 #define DEBUG_BLINK 0x69fa
 
 #define LEDS_OFF 0x0eaf
-struct LedsOff {
+struct LedsOffRequest {
   uint8_t stripId;
 };
 
 #define IDLE_ANIMATE 0xa146
-struct IdleAnimate {
+struct IdleAnimateRequest {
   uint8_t stripId;
   uint8_t swaps;
   uint8_t startGreen;
 };
 
 #define FILL_STRIP 0xc273
-struct FillStrip {
+struct FillStripRequest {
   uint8_t stripId;
   uint8_t red;
   uint8_t green;
@@ -41,18 +47,18 @@ struct FillStrip {
 };
 
 #define CREATE_STRIP 0x8bda
-struct CreateStrip {
+struct CreateStripRequest {
   uint8_t stripPin;
   uint16_t ledLength;
 };
 
 #define DESTROY_STRIP 0x10e7
-struct DestroyStrip {
+struct DestroyStripRequest {
   uint8_t stripId;
 };
 
 #define CREATE_SLICE 0x3138
-struct CreateSlice {
+struct CreateSliceRequest {
   uint8_t stripId;
   uint16_t startLed;
   uint16_t endLed;
